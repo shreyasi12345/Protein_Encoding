@@ -526,75 +526,105 @@ def ASA(seq, seqName, allowed, keys, file, types, type):
 
 
 # Bigram PSSM(BiPSSM)
-def BiPSSM(seq, seqName, allowed, keys, file, types, type, n, orderString):
+def BiPSSM(seq, seqName, keys, orderString, n, file):
     encoded = []
-
     aas = ""
     elements = []
-    count = {key: 0 for key in keys}
+    count = {}
     l = len(seq)
+    for key in keys:
+        count[key] = 0
 
-    # Read PSSM file
-    lines = file.readlines()[3:]  # Skip the first three lines
-    for line in lines:
+    line = file.readline().strip()
+    line = file.readline().strip()
+    line = file.readline().strip()
+    for line in file:
+        newLine = [0] * 20
+        counter = 0
         values = []
-        columns = line.split()
-        if len(columns) < 22:
-            continue
-        if columns[1][0] not in orderString:
-            continue
-        aas += columns[1][0]
-        for val in columns[2:22]:
-            values.append(float(val))
-        elements.append(values)
+        iss = line.strip().split()
+        for line in iss:
+            if counter == 1:
+                exists = False
+                for c in orderString:
+                    if line[0] == c:
+                        exists = True
+                        break
+                if not exists:
+                    break
+                aas += line[0]
+            if counter >= 2:
+                val = float(line)
+                values.append(val)
+            counter += 1
+        else:
+            elements.append(values)
 
     found = aas.find(seq)
     if found == -1:
         print("Error: Sequence", seqName, "not found in the file.")
     else:
+        lines = 0
+        l = len(seq)
         for i in range(found, found + l - n):
-            for j, c1 in enumerate(orderString):
-                for k, c2 in enumerate(orderString):
+            for j in range(len(orderString)):
+                c1 = orderString[j]
+                for k in range(len(orderString)):
+                    c2 = orderString[k]
                     key = c1 + c2
                     count[key] += elements[i][j] * elements[i + n][k]
 
     for key in keys:
-        encoded.append(count[key] / (l - n))
+        encoded.append(count[key] / (l - (n * 1.0)))
 
     return encoded
 
 
 # PSSM Autocovariance (PSSMAC)
-def PSSMAC(seq, seqName, allowed, keys, file, types, type, n, orderString):
+def PSSMAC(seq, seqName, keys, orderString, n, file):
     encoded = []
-
     aas = ""
     elements = []
-    avg = {c: 0 for c in orderString}
-    count = {key: 0 for key in keys}
+    avg = {}
+    count = {}
     l = len(seq)
+    for c in orderString:
+        avg[c] = 0
+    for key in keys:
+        count[key] = 0
 
-    # Read PSSM file
-    lines = file.readlines()[3:]  # Skip the first three lines
-    for line in lines:
+    line = file.readline()
+    line = file.readline()
+    line = file.readline()
+    for line in file:
+        newLine = [0] * 20
+        counter = 0
         values = []
-        columns = line.split()
-        if len(columns) < 22:
-            continue
-        if columns[1][0] not in orderString:
-            continue
-        aas += columns[1][0]
-        for val in columns[2:22]:
-            values.append(float(val))
-        elements.append(values)
+        iss = line.split()
+        for line in iss:
+            if counter == 1:
+                exists = False
+                for c in orderString:
+                    if line[0] == c:
+                        exists = True
+                        break
+                if not exists:
+                    break
+                aas += line[0]
+            if counter >= 2:
+                val = float(line)
+                values.append(val)
+            counter += 1
+        else:
+            elements.append(values)
 
     found = aas.find(seq)
     if found == -1:
         print("Error: Sequence", seqName, "not found in the file.")
     else:
         for i in range(found, found + l):
-            for j, c in enumerate(orderString):
-                avg[c] += elements[i][j]
+            for j in range(len(orderString)):
+                avg[orderString[j]] += elements[i][j]
         for c in orderString:
             avg[c] /= l
         for i in range(1, n + 1):
@@ -603,65 +633,97 @@ def PSSMAC(seq, seqName, allowed, keys, file, types, type, n, orderString):
                     c = orderString[k]
                     key = str(i) + c
                     count[key] += ((elements[j][k] - avg[c]) * (elements[j + i][k] - avg[c]))
-
         for key in keys:
-            encoded.append(count[key] / (l - n))
+            encoded.append(count[key] / (l - (n * 1.0)))
 
     return encoded
 
 
 # Pseudo PSSM(PPSM)
-def PPSSM(seq, seqName, allowed, keys, file, types, type, n, orderString):
+def PPSSM(seq, seqName, keys, orderString, n, file):
     encoded = []
-
-    avg = [0] * len(seq)
-    avgChar = {c: 0 for c in orderString}
+    avg = []
+    avgChar = {}
     aas = ""
     elements = []
-    count = {key: 0 for key in keys}
+    count = {}
     l = len(seq)
 
-    # Read PSSM file
-    lines = file.readlines()[3:]  # Skip the first three lines
-    for line in lines:
+    for c in seq:
+        avg.append(0)
+
+    for c in orderString:
+        avgChar[c] = 0
+
+    for key in keys:
+        count[key] = 0
+    #SKIPPING THE FIRST 3 LINES
+    line = file.readline()
+    line = file.readline()
+    line = file.readline()
+    lineCount = 0
+
+    while line:
+        newLine = [0] * 20
+        counter = 0
         values = []
-        columns = line.split()
-        if len(columns) < 22:
-            continue
-        if columns[1][0] not in orderString:
-            continue
-        aas += columns[1][0]
-        for val in columns[2:22]:
-            values.append(float(val))
+        iss = line.split()
+
+        for line in iss:
+            if counter == 1:
+                exists = False
+                for c in orderString:
+                    if line[0] == c:
+                        exists = True
+                        break
+                if not exists:
+                    break
+                aas += line[0]
+
+            if counter >= 2:
+                val = float(line)
+                values.append(val)
+
+            counter += 1
+
         elements.append(values)
+        line = file.readline()
 
     found = aas.find(seq)
+
     if found == -1:
         print("Error: Sequence", seqName, "not found in the file.")
     else:
         for i in range(found, found + l):
-            for j, c in enumerate(orderString):
+            for j in range(len(orderString)):
                 avg[i] += elements[i][j]
+
         for i in range(found, found + l):
             avg[i] /= 20
             den = 0
+
             for val in elements[i]:
                 den += (val - avg[i]) ** 2
-            den = math.sqrt(den / 20)
+
+            den = (den / 20) ** 0.5
+
             for j in range(20):
                 elements[i][j] -= avg[i]
                 elements[i][j] /= den
-                key = "S" + orderString[j]
-                count[key] += elements[i][j]
+                key = orderString[j]
+                count["S" + key] += elements[i][j]
+
                 if i >= found + n:
-                    count["R" + orderString[j]] += (elements[i - n][j] - elements[i][j]) ** 2
+                    count["R" + key] += (elements[i - n][j] - elements[i][j]) ** 2
 
         counter = 0
+
         for key in keys:
             if counter < 20:
                 encoded.append(count[key] / l)
             else:
                 encoded.append(count[key] / (l - n))
+
             counter += 1
 
     return encoded

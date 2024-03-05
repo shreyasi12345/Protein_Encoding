@@ -877,23 +877,32 @@ def main():
             file = open(path + "/" + names[i] + ".pssm")
             if not file:
                 print("File " + names[i] + ".pssm does not exist.")
-            elif file.is_open():
-                encodedProtein = []
+
                 # if encoding == "PSSM":
                 #     encodedProtein = PSSM(seqs[i], names[i], orderString, keys, file)
                 # elif encoding == "PSSMAAC":
                 #     encodedProtein = PSSMAAC(seqs[i], names[i], keys, orderString, file)
-                if encoding == "BiPSSM":
-                    encodedProtein = BiPSSM(seqs[i], names[i], keys, orderString, n, file)
-                elif encoding == "PSSMAC":
-                    encodedProtein = PSSMAC(seqs[i], names[i], keys, orderString, n, file)
-                elif encoding == "PPSSM":
-                    encodedProtein = PPSSM(seqs[i], names[i], keys, orderString, n, file)
-                seq_names.append(names[i])
-                encoded.append(encodedProtein)
-                file.close()
-            else:
-                print("File " + names[i] + ".pssm cannot be opened.")
+                # if encoding == "BiPSSM":
+                #     encodedProtein = BiPSSM(seqs[i], names[i], keys, orderString, n, file)
+                # elif encoding == "PSSMAC":
+                #     encodedProtein = PSSMAC(seqs[i], names[i], keys, orderString, n, file)
+                # elif encoding == "PPSSM":
+                #     encodedProtein = PPSSM(seqs[i], names[i], keys, orderString, n, file)
+                # seq_names.append(names[i])
+                # encoded.append(encodedProtein)
+                # file.close()
+            # else:
+            #     print("File " + names[i] + ".pssm cannot be opened.")
+            encodedProtein = []
+
+            if encoding == "BiPSSM":
+                encodedProtein = BiPSSM(seqs[i], names[i], keys, orderString, n, file)
+            elif encoding == "PSSMAC":
+                encodedProtein = PSSMAC(seqs[i], names[i], keys, orderString, n, file)
+            elif encoding == "PPSSM":
+                encodedProtein = PPSSM(seqs[i], names[i], keys, orderString, n, file)
+            seq_names.append(names[i])
+            encoded.append(encodedProtein)
     # TVD
     elif encoding == "TVD":
         seq_length = check_fasta_same_length(seqs)
