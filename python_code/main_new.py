@@ -444,14 +444,14 @@ def main():
             #     encodedProtein = SSEC(seqs[i], names[i], allowed, keys, file3, typesC, "spXout")
             elif encoding == "SSPB":
                 # if file1.is_open():
-                encodedProtein = SSPB(seqs[i], names[i], allowed, keys, n, file1, typesC, "ss2")
+                encodedProtein = SSPB(seqs[i], names[i], allowed, keys, file1, typesC, "ss2",n)
             # elif file2.is_open():
             #     encodedProtein = SSPB(seqs[i], names[i], allowed, keys, n, file2, typesC, "spd33")
             # if file3.is_open():
             #     encodedProtein = SSPB(seqs[i], names[i], allowed, keys, n, file3, typesC, "spXout")
             elif encoding == "SSPAC":
                 # if file1.is_open():
-                encodedProtein = SSPAC(seqs[i], names[i], allowed, keys, n, file1, typesC, "ss2")
+                encodedProtein = SSPAC(seqs[i], names[i], allowed, keys, file1, typesC, "ss2",n)
             # elif file2.is_open():
             #     encodedProtein = SSPAC(seqs[i], names[i], allowed, keys, n, file2, typesC, "spd33")
             # if file3.is_open():
@@ -723,7 +723,7 @@ def main():
             if encoding == "TAB":
                 encodedProtein = TAB(seqs[i], names[i], allowed, keys, n, file2, "spXout")
             if encoding == "TAAC":
-                encodedProtein = TAAC(seqs[i], names[i], allowed, keys,n, file2, "spXout")
+                encodedProtein = TAAC(seqs[i], names[i], allowed, keys, n, file2, "spXout")
 
             seq_names.append(names[i])
             encoded.append(encodedProtein)

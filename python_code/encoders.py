@@ -13,28 +13,29 @@ def SSEB(seq, seqName, allowed, keys, file, types, type):
     aas = ""
     elements = ""
     # Read PSSM file
-    file.readline()  # Skip the first line
+    # lines = file.readlines()[1:]  # Skip the first line
     if type == "ss2":
-        file.readline()  # Skip the second line if .ss2
+        lines = file.readlines()[2:]  # Skip the second line if .ss2
 
-    for line in file:
+    for line in lines:
         counter = 0
-        for word in line.split():
+        for word in line.split()[1:]:
             counter += 1
             if counter == 1:
                 exists = False
                 for c in allowed:
-                    if word[0] == c:
+                    if word == c:
                         exists = True
                         break
                 if not exists:
                     break
-                aas += word[0]
+                aas += word
             elif counter == 2:
-                elements += word[0]
+                elements += word
                 break
 
     found = aas.find(seq)
+    # found = seq.index(''.join(aas))
     if found == -1:
         print("Error: Sequence", seqName, "not found in the file.")
     else:
@@ -57,29 +58,29 @@ def SSEC(seq, seqName, allowed, keys, file, types, type):
     aas = ""
     elements = ""
     # Read PSSM file
-    file.readline()  # Skip the first line
+    # file.readline()  # Skip the first line
     if type == "ss2":
-        file.readline()  # Skip the second line if .ss2
+        lines = file.readlines()[2:]  # Skip the second line if .ss2
 
     types_count = defaultdict(int)
     for c in types:
         types_count[c] = 0
 
-    for line in file:
+    for line in lines:
         counter = 0
-        for word in line.split():
+        for word in line.split()[1:]:
             counter += 1
             if counter == 1:
                 exists = False
                 for ch in allowed:
-                    if word[0] == ch:
+                    if word == ch:
                         exists = True
                         break
                 if not exists:
                     break
-                aas += word[0]
+                aas += word
             elif counter == 2:
-                elements += word[0]
+                elements += word
                 break
 
     found = aas.find(seq)
@@ -100,32 +101,32 @@ def SSEC(seq, seqName, allowed, keys, file, types, type):
 # Secondary Structure Probabilities Bigram(SSBP)
 def SSPB(seq, seqName, allowed, keys, file, types, type, n):
     encoded = []
-
+    #lines=[]
     aas = ""
     probs = defaultdict(list)
 
     # Read PSSM file
-    file.readline()  # Skip the first line
+    # file.readline()  # Skip the first line
     if type == "ss2":
-        file.readline()  # Skip the second line if .ss2
+        lines = file.readlines()[2:]  # Skip the second line if .ss2
 
     count = defaultdict(float)
     for key in keys:
         count[key] = 0.0
 
-    for line in file:
+    for line in lines:
         counter = 0
-        for word in line.split():
+        for word in line.split()[1:]:
             counter += 1
             if counter == 1:
                 exists = False
                 for c in allowed:
-                    if word[0] == c:
+                    if word == c:
                         exists = True
                         break
                 if not exists:
                     break
-                aas += word[0]
+                aas += word
             elif (counter == 3 and type == "ss2") or (counter == 11 and type == "spd33") or (
                     counter == 7 and type == "spXout"):
                 val = float(word)
@@ -164,27 +165,27 @@ def SSPAC(seq, seqName, allowed, keys, file, types, type, n):
     probs = defaultdict(list)
 
     # Read PSSM file
-    file.readline()  # Skip the first line
+   # file.readline()  # Skip the first line
     if type == "ss2":
-        file.readline()  # Skip the second line if .ss2
+      lines=  file.readlines()[2:]  # Skip the second line if .ss2
 
     count = defaultdict(float)
     for key in keys:
         count[key] = 0.0
 
-    for line in file:
+    for line in lines:
         counter = 0
-        for word in line.split():
+        for word in line.split()[1:]:
             counter += 1
             if counter == 1:
                 exists = False
                 for c in allowed:
-                    if word[0] == c:
+                    if word == c:
                         exists = True
                         break
                 if not exists:
                     break
-                aas += word[0]
+                aas += word
             elif (counter == 3 and type == "ss2") or (counter == 11 and type == "spd33") or (
                     counter == 7 and type == "spXout"):
                 val = float(word)
@@ -428,43 +429,43 @@ def TAB(seq, seqName, allowed, keys, n, file, type):
 
 
 # Torsional Angles Autocovariance(TAAC)
+
 def TAAC(seq, seqName, allowed, keys, n, file, type):
     encoded = []
+
     pi = 3.14159265359
 
-   # lines = file.readlines()[1:]
-    aas = ""
+    # Read torsion angle file
+    lines = file.readlines()[1:]  # Skip first line
+    aas = []
     phiSin = []
     phiCos = []
     psiSin = []
     psiCos = []
-   # line = file.readline()
-    for line in file.readlines()[1:]:
+    for line in lines:
         counter = 0
-        iss = line.split()
-        for line in iss:
+        for word in line.split()[1:]:
             counter += 1
             if counter == 1:
                 exists = False
                 for c in allowed:
-                    if line[0] == c:
+                    if word == c:
                         exists = True
                         break
                 if not exists:
                     break
-                aas += line[0]
+                aas.append(word)
             elif (type == "spd33" and counter == 4) or (type == "spXout" and counter == 3):
-                val = float(line) * (pi / 180)
+                val = float(word) * (pi / 180)
                 phiSin.append(math.sin(val))
                 phiCos.append(math.cos(val))
             elif (type == "spd33" and counter == 5) or (type == "spXout" and counter == 4):
-                val = float(line) * (pi / 180)
+                val = float(word) * (pi / 180)
                 psiSin.append(math.sin(val))
                 psiCos.append(math.cos(val))
                 break
-        #line = file.readline()
 
-    found = aas.find(seq)
+    found = seq.index(''.join(aas))
     if found == -1:
         print("Error: Sequence", seqName, "not found in the file.")
     else:
@@ -473,10 +474,10 @@ def TAAC(seq, seqName, allowed, keys, n, file, type):
         for i in range(1, n + 1):
             iString = str(i)
             for j in range(found, found + l - i):
-                values[iString + "-phiSin"] = phiSin[i] * phiSin[i + n]
-                values[iString + "-phiCos"] = phiCos[i] * phiCos[i + n]
-                values[iString + "-psiSin"] = psiSin[i] * psiSin[i + n]
-                values[iString + "-psiCos"] = psiCos[i] * psiCos[i + n]
+                values[iString + "-phiSin"] = phiSin[j] * phiSin[j + i]
+                values[iString + "-phiCos"] = phiCos[j] * phiCos[j + i]
+                values[iString + "-psiSin"] = psiSin[j] * psiSin[j + i]
+                values[iString + "-psiCos"] = psiCos[j] * psiCos[j + i]
 
         for key in keys:
             encoded.append(values[key] / l)
@@ -657,7 +658,7 @@ def PPSSM(seq, seqName, keys, orderString, n, file):
 
     for key in keys:
         count[key] = 0
-    #SKIPPING THE FIRST 3 LINES
+    # SKIPPING THE FIRST 3 LINES
     line = file.readline()
     line = file.readline()
     line = file.readline()
