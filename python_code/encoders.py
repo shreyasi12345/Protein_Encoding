@@ -486,26 +486,26 @@ def TAAC(seq, seqName, allowed, keys, n, file, type):
 
 
 # Accessible Surface Area(ASA)
-def ASA(seq, seqName, allowed, keys, file, types, type):
+def ASA(seq, seqName, allowed, keys, file, type):
     encoded = []
 
     # Read ASA file
-    line = file.readline()  # Skip first line
+    lines = file.readlines()[1:]  # Skip first line
     aas = []
     asas = []
-    while line:
+    for line in lines:
         counter = 0
-        for word in line.split():
+        for word in line.split()[1:]:
             counter += 1
             if counter == 1:
                 exists = False
                 for c in allowed:
-                    if word[0] == c:
+                    if word == c:
                         exists = True
                         break
                 if not exists:
                     break
-                aas.append(word[0])
+                aas.append(word)
             elif (type == "spd33" and counter == 3) or (type == "spXout" and counter == 10):
                 val = float(word)
                 asas.append(val)
@@ -536,26 +536,25 @@ def BiPSSM(seq, seqName, keys, orderString, n, file):
     for key in keys:
         count[key] = 0
 
-    line = file.readline().strip()
-    line = file.readline().strip()
-    line = file.readline().strip()
-    for line in file:
+    lines = file.readlines()[3:]
+    for line in lines:
         newLine = [0] * 20
         counter = 0
         values = []
-        iss = line.strip().split()
-        for line in iss:
+        iss = line.strip().split()[1:]
+        for word in iss:
+            counter+=1
             if counter == 1:
                 exists = False
                 for c in orderString:
-                    if line[0] == c:
+                    if word == c:
                         exists = True
                         break
                 if not exists:
                     break
-                aas += line[0]
+                aas += word
             if counter >= 2:
-                val = float(line)
+                val = float(word)
                 values.append(val)
             counter += 1
         else:
@@ -594,26 +593,25 @@ def PSSMAC(seq, seqName, keys, orderString, n, file):
     for key in keys:
         count[key] = 0
 
-    line = file.readline()
-    line = file.readline()
-    line = file.readline()
-    for line in file:
+    lines = file.readlines()[3:]
+    for line in lines:
         newLine = [0] * 20
         counter = 0
         values = []
-        iss = line.split()
-        for line in iss:
+        iss = line.split()[1:]
+        for word in iss:
+            counter+=1
             if counter == 1:
                 exists = False
                 for c in orderString:
-                    if line[0] == c:
+                    if word == c:
                         exists = True
                         break
                 if not exists:
                     break
-                aas += line[0]
+                aas += word
             if counter >= 2:
-                val = float(line)
+                val = float(word)
                 values.append(val)
             counter += 1
         else:
@@ -659,30 +657,30 @@ def PPSSM(seq, seqName, keys, orderString, n, file):
     for key in keys:
         count[key] = 0
     # SKIPPING THE FIRST 3 LINES
-    line = file.readline()
-    line = file.readline()
-    line = file.readline()
+    lines = file.readlines()[3:]
+
     lineCount = 0
 
-    while line:
+    for line in lines:
         newLine = [0] * 20
         counter = 0
         values = []
-        iss = line.split()
+        iss = line.split()[1:]
 
-        for line in iss:
+        for word in iss:
+            counter+=1
             if counter == 1:
                 exists = False
                 for c in orderString:
-                    if line[0] == c:
+                    if word == c:
                         exists = True
                         break
                 if not exists:
                     break
-                aas += line[0]
+                aas += word
 
             if counter >= 2:
-                val = float(line)
+                val = float(word)
                 values.append(val)
 
             counter += 1

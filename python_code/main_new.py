@@ -761,19 +761,23 @@ def main():
 
         # Assuming a parallel processing context similar to OpenMP in Python (e.g., using multiprocessing)
         for i in range(len(seqs)):
-            with open(os.path.join(path, f"{names[i]}.spd33"), 'r') as file1, \
-                    open(os.path.join(path, f"{names[i]}.spXout"), 'r') as file2:
-                if not file1 and not file2:
-                    print(f"No torsion angles files (.spd3 or spXout) found for sequence {names[i]}.")
-                elif not file1 and file2:
-                    print(f"File {names[i]}.spd33 could not be opened.")
-                elif not file2 and file1:
-                    print(f"File {names[i]}.spXout could not be opened.")
-                else:
-                    encoded_protein = ASA(seqs[i], names[i], allowed, keys, file1 if file1 else file2,
-                                          "spd33" if file1 else "spXout")
-                    seq_names.append(names[i])
-                    encoded.append(encoded_protein)
+            # with open(os.path.join(path, f"{names[i]}.spd33"), 'r') as file1, \
+            #         open(os.path.join(path, f"{names[i]}.spXout"), 'r') as file2:
+            #     if not file1 and not file2:
+            #         print(f"No torsion angles files (.spd3 or spXout) found for sequence {names[i]}.")
+            #     elif not file1 and file2:
+            #         print(f"File {names[i]}.spd33 could not be opened.")
+            #     elif not file2 and file1:
+            #         print(f"File {names[i]}.spXout could not be opened.")
+            #     else:
+            #         encoded_protein = ASA(seqs[i], names[i], allowed, keys, file1 if file1 else file2,
+            #                               "spd33" if file1 else "spXout")
+            file2 = open(path + "/" + names[i] + ".spXout")
+            encoded_protein = ASA(seqs[i], names[i], allowed, keys, file2,"spXout")
+
+            seq_names.append(names[i])
+            encoded.append(encoded_protein)
+
     # PSSM(blastpgp)
     elif encoding == "PSSM" or encoding == "PSSMAAC" or encoding == "BiPSSM" or encoding == "PSSMAC" or encoding == "PPSSM":
         n = 30
