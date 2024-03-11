@@ -733,7 +733,7 @@ def TVD(seq, allowed, keys, tvd):
     print(seq)
     encoded = []
     l = len(seq)
-    for c in seq[0]:
+    for c in seq:
         for val in tvd[c]:
             encoded.append(val)
     return encoded
