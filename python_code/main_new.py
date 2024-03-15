@@ -16,7 +16,7 @@ import csv
 
 def print_help():
     print("Main usage:")
-    print("  Required arguments: -i <input file> -o <output file> -e <encoding> [options]")
+    print(" sseb")
     print(
         "  Suggested argument: --threads <integer>, default 1. Number of threads. Usually double the number of available cores.")
     print(
@@ -684,7 +684,7 @@ def main():
                 keys.append(key + "-psiCos")
 
         for i in range(len(seqs)):
-            # TODO: check if .spd33 or .spxout files exist first and then open
+
 
             # file1 = open(path + "/" + names[i] + ".spd33")
             # file2 = open(path + "/" + names[i] + ".spXout")

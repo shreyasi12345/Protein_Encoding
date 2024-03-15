@@ -288,7 +288,7 @@ def DisorderB(seq, seqName, allowed, keys, file, types, type):
 # Torsional Angles (TA)
 def TA(seq, seqName, allowed, keys, file, type):
     encoded = []
-
+    counter=0
     aas = ""
     phis = []
     psis = []
@@ -296,9 +296,9 @@ def TA(seq, seqName, allowed, keys, file, type):
         parts = line.strip().split()
         for counter, part in enumerate(parts):
             if counter == 1:
-                if part[0] not in allowed:
+                if part not in allowed:
                     break
-                aas += part[0]
+                aas += part
             elif (type == "spd33" and counter == 4) or (type == "spXout" and counter == 3):
                 val = float(part)
                 phis.append(val)
