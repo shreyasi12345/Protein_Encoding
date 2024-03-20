@@ -9,7 +9,8 @@ import numpy as np
 # Secondary Structure Elements Binary (SSEB)
 def SSEB(seq, seqName, allowed, keys, file, types, type):
     encoded = []
-
+    k=[]
+    K = []
     aas = ""
     elements = ""
     # Read PSSM file
@@ -26,6 +27,8 @@ def SSEB(seq, seqName, allowed, keys, file, types, type):
                 for c in allowed:
                     if word == c:
                         exists = True
+                        k.append(word)
+
                         break
                 if not exists:
                     break
@@ -42,12 +45,61 @@ def SSEB(seq, seqName, allowed, keys, file, types, type):
         l = len(seq)
         for i in range(found, found + l):
             c = elements[i]
+            K.append(c)
+
             if c in types:
                 vals = types[c]
                 encoded.extend(vals)
             else:
                 encoded.extend([0.0, 0.0, 0.0])
 
+    pair_C, pair_H , pair_E = [], [] , []
+    for cnt in range(len(K)):
+        if K[cnt] == 'C':
+            pair_C.append(k[cnt])
+        elif K[cnt] == 'H':
+            pair_H.append(k[cnt])
+        elif K[cnt] == 'E':
+            pair_E.append(k[cnt])
+
+    C = set(pair_C)
+    H = set(pair_H)
+    E = set(pair_E)
+
+    print('for C :' , C)
+    print('for E :' , E)
+    print('for H :', H)
+    print("*"*8)
+
+
+    '''    
+    pair = []
+    for cnt in range(len(K)):
+        if K[cnt] == 'C':
+            pair.append((k[cnt] , K[cnt]))
+        
+    print("before" , len(pair))
+    pairs = set(pair)
+    print("after", len(pairs))
+    for p in pair:
+        print(p)
+
+    import pandas as pd
+
+    df = pd.DataFrame(pairs, columns=['Acid', 'Strutucre'])
+
+    # Specify the filename for the Excel file
+    import random
+
+    inte = random.randint(1,100)
+
+
+    # Constructing the CSV filename
+    csv_file = f'pairs{inte}.csv'
+
+    # Exporting DataFrame to CSV
+    df.to_csv(csv_file, index=False)
+    '''
     return encoded
 
 
@@ -94,6 +146,7 @@ def SSEC(seq, seqName, allowed, keys, file, types, type):
                 types_count[c] += 1
         for c in types:
             encoded.append(types_count[c] / l)
+    print(types_count)
 
     return encoded
 
@@ -101,7 +154,7 @@ def SSEC(seq, seqName, allowed, keys, file, types, type):
 # Secondary Structure Probabilities Bigram(SSBP)
 def SSPB(seq, seqName, allowed, keys, file, types, type, n):
     encoded = []
-    #lines=[]
+    # lines=[]
     aas = ""
     probs = defaultdict(list)
 
@@ -150,6 +203,8 @@ def SSPB(seq, seqName, allowed, keys, file, types, type, n):
                 key = c + d
                 for i in range(found, found + l - n):
                     count[key] += probs[c][i] * probs[d][i + n]
+                    print(key, probs[c][i], probs[d][i + n])
+                print(f'combinations\t {key} with value \t {count[key]}')
 
         for key in keys:
             encoded.append(count[key])
@@ -165,9 +220,9 @@ def SSPAC(seq, seqName, allowed, keys, file, types, type, n):
     probs = defaultdict(list)
 
     # Read PSSM file
-   # file.readline()  # Skip the first line
+    # file.readline()  # Skip the first line
     if type == "ss2":
-      lines=  file.readlines()[2:]  # Skip the second line if .ss2
+        lines = file.readlines()[2:]  # Skip the second line if .ss2
 
     count = defaultdict(float)
     for key in keys:
@@ -209,6 +264,8 @@ def SSPAC(seq, seqName, allowed, keys, file, types, type, n):
                 key = str(i) + c
                 for j in range(found, found + l - i):
                     count[key] += probs[c][j] * probs[c][j + i]
+                    # print(key,probs[c][j], probs[c][j + 1])
+                print(f'combinations\t {key} with value \t {count[key] / l}')
 
         for key in keys:
             encoded.append(count[key] / l)
@@ -288,7 +345,7 @@ def DisorderB(seq, seqName, allowed, keys, file, types, type):
 # Torsional Angles (TA)
 def TA(seq, seqName, allowed, keys, file, type):
     encoded = []
-    #counter=0
+    # counter=0
     aas = ""
     phis = []
     psis = []
@@ -543,7 +600,7 @@ def BiPSSM(seq, seqName, keys, orderString, n, file):
         values = []
         iss = line.strip().split()[1:]
         for word in iss:
-            counter+=1
+            counter += 1
             if counter == 1:
                 exists = False
                 for c in orderString:
@@ -600,7 +657,7 @@ def PSSMAC(seq, seqName, keys, orderString, n, file):
         values = []
         iss = line.split()[1:]
         for word in iss:
-            counter+=1
+            counter += 1
             if counter == 1:
                 exists = False
                 for c in orderString:
@@ -658,9 +715,7 @@ def PPSSM(seq, seqName, keys, orderString, n, file):
         count[key] = 0
     # SKIPPING THE FIRST 3 LINES
     lines = file.readlines()[3:]
-
     lineCount = 0
-
     for line in lines:
         newLine = [0] * 20
         counter = 0
@@ -668,7 +723,7 @@ def PPSSM(seq, seqName, keys, orderString, n, file):
         iss = line.split()[1:]
 
         for word in iss:
-            counter+=1
+            counter += 1
             if counter == 1:
                 exists = False
                 for c in orderString:
